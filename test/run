@@ -53,15 +53,15 @@ check "rename ops file should require a name to be set" \
       -o ops/rename.yml \
       -v name=foo
 
-check "resize_disks ops file should require both disk size variables" \
+check "resize-disks ops file should require both disk size variables" \
       k8s.yml \
-      -o ops/resize_disks.yml \
+      -o ops/resize-disks.yml \
       -v control_plane_disk_size=102400 \
       -v worker_disk_size=40960
 
-check "resize_vms ops file should require both vm type variables" \
+check "resize-vms ops file should require both vm type variables" \
       k8s.yml \
-      -o ops/resize_vms.yml \
+      -o ops/resize-vms.yml \
       -v control_plane_vm_type=cp \
       -v worker_vm_type=huuuuge
 

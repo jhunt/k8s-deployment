@@ -71,7 +71,7 @@ Worker nodes should be scaled to meet your workload demands.
 
 ```
 bosh deploy k8s.yml \
-  -o ops/resize_vms.yml \
+  -o ops/resize-vms.yml \
   -v control_plane_vm_type=default \
   -v worker_vm_type=huge
 ```
@@ -96,7 +96,7 @@ to use new VM types.
 
 ```
 bosh deploy k8s.yml \
-  -o ops/resize_disks.yml \
+  -o ops/resize-disks.yml \
   -v control_plane_disk_size=40_000 \
   -v worker_disk_size=80_000
 ```

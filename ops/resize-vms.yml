@@ -1,6 +1,6 @@
 ---
 #
-#  ops/resize_vms.yml
+#  ops/resize-vms.yml
 #
 #  Out of the box, both the "control" and "worker" instance_groups
 #  will use the "default" VM type in your director's cloud config.

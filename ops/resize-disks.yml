@@ -1,6 +1,6 @@
 ---
 #
-#  ops/resize_disks.yml
+#  ops/resize-disks.yml
 #
 #  By default, control and worker nodes will be deployed
 #  with 20Gi persistent disks, for storing generated state
