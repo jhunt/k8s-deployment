@@ -46,6 +46,10 @@ instance_groups:
         release: k8s
         properties:
           master: true
+          labels:
+            bosh/deployment:     '(deployment)'
+            bosh/instance-group: '(name)'
+            bosh/instance-id:    '(id)'
 
       - name: jumpbox
         release: k8s
@@ -72,6 +76,12 @@ instance_groups:
           cni: flannel
       - name: kubelet
         release: k8s
+        properties:
+          labels:
+            node-role.kubernetes.io/worker: ''
+            bosh/deployment:     '(deployment)'
+            bosh/instance-group: '(name)'
+            bosh/instance-id:    '(id)'
 
 variables:
   - name: tls-ca
