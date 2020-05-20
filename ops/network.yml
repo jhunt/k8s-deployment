@@ -1,0 +1,22 @@
+---
+#
+#  ops/network.yml
+#
+#  Out of the box, your Kubernetes cluster will be deployed
+#  to the "default" network.  If you want to move it elsewhere,
+#  this ops file patches up the network definitions, as well as
+#  other references (namely the kubelet "instance-groups"
+#  property) to match.
+#
+- path: /instance_groups/name=control/networks/name=default/name
+  type: replace
+  value: ((network_name))
+- path: /instance_groups/name=kubelet/networks/name=default/name
+  type: replace
+  value: ((network_name))
+
+- path: /instance_groups/name=control/jobs/name=control/properties/kubelet/instance-groups
+  type: replace
+  value:
+    - worker.((network_name))
+    - control.((network_name))

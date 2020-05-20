@@ -1,0 +1,12 @@
+---
+#
+#  ops/cloud/vsphere-custom-controller-type.yml
+#
+#  requires: ops/cloud/vsphere.yml
+#
+#  This ops files lets you override the default volume controller
+#  type with a custom value.
+#
+- path: /instance_groups/name=control/jobs/name=control/properties/cloud-provider/vsphere/controller-type?
+  type: replace
+  value: ((vsphere_controller_type))

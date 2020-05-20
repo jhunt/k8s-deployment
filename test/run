@@ -1,0 +1,116 @@
+#!/bin/bash
+
+fails=0
+
+check() {
+  local msg=$1 ; shift
+  if bosh int -l test/vars.yml --var-errs --var-errs-unused "$@" >/dev/null; then
+    echo "ok $msg"
+  else
+    rc=$?
+    echo "FAIL $msg"
+    echo " ... bosh interpolation exited $rc"
+    fails=$(( fails + 1 ))
+  fi
+}
+
+finished() {
+  if [[ $fails = 0 ]]; then
+    echo "ALL TESTS PASSED"
+    exit 0
+  fi
+  echo "$fails TEST(S) FAILED"
+  exit 1
+}
+
+check "base case with no ops files (or extra variables) should succeed" \
+      k8s.yml
+
+check "bootstrap ops file should require the bootstrap variable" \
+      k8s.yml \
+      -o ops/bootstrap.yml \
+      -v bootstrap_resources_yaml=foo
+
+check "latest-release ops file should succeed" \
+      k8s.yml \
+      -o ops/latest-release.yml
+
+check "latest-stemcell ops file should succeed" \
+      k8s.yml \
+      -o ops/latest-stemcell.yml
+
+check "latest-stemcell and latest-release ops files should succeed together" \
+      k8s.yml \
+      -o ops/latest-stemcell.yml \
+      -o ops/latest-release.yml
+
+check "nfs ops file should succeed" \
+      k8s.yml \
+      -o ops/nfs.yml
+
+check "rename ops file should require a name to be set" \
+      k8s.yml \
+      -o ops/rename.yml \
+      -v name=foo
+
+check "resize_disks ops file should require both disk size variables" \
+      k8s.yml \
+      -o ops/resize_disks.yml \
+      -v control_plane_disk_size=102400 \
+      -v worker_disk_size=40960
+
+check "resize_vms ops file should require both vm type variables" \
+      k8s.yml \
+      -o ops/resize_vms.yml \
+      -v control_plane_vm_type=cp \
+      -v worker_vm_type=huuuuge
+
+check "scale ops file should require both instance count variables" \
+      k8s.yml \
+      -o ops/scale.yml \
+      -v control_plane_instances=3 \
+      -v worker_instances=100
+
+check "vip ops file should require vrrp id and vip as variables" \
+      k8s.yml \
+      -o ops/vip.yml \
+      -v vrrp_id=42 \
+      -v vip=127.0.0.1
+
+check "vsphere cloud provider ops file should require a ton of variables" \
+      k8s.yml \
+      -o ops/cloud/vsphere.yml \
+      -v vsphere_ip=127.0.0.1 \
+      -v vsphere_username=foo \
+      -v vsphere_password=sekrit \
+      -v vsphere_datacenter=lab-dc1 \
+      -v vsphere_network="VM Network" \
+      -v vsphere_datastore=ds1 \
+      -v vsphere_folder=/k8s/volumes
+
+check "vsphere cloud provider ops file with the insecure ops file should not require any new variables" \
+      k8s.yml \
+      -o ops/cloud/vsphere.yml \
+      -o ops/cloud/vsphere-insecure.yml \
+      -v vsphere_ip=127.0.0.1 \
+      -v vsphere_username=foo \
+      -v vsphere_password=sekrit \
+      -v vsphere_datacenter=lab-dc1 \
+      -v vsphere_network="VM Network" \
+      -v vsphere_datastore=ds1 \
+      -v vsphere_folder=/k8s/volumes
+
+check "vsphere cloud provider ops file with the custom controller type ops file should require a new controller type variable" \
+      k8s.yml \
+      -o ops/cloud/vsphere.yml \
+      -o ops/cloud/vsphere-custom-controller-type.yml \
+      -v vsphere_ip=127.0.0.1 \
+      -v vsphere_username=foo \
+      -v vsphere_password=sekrit \
+      -v vsphere_datacenter=lab-dc1 \
+      -v vsphere_network="VM Network" \
+      -v vsphere_datastore=ds1 \
+      -v vsphere_folder=/k8s/volumes \
+      -v vsphere_controller_type=not-pvscsi
+
+finished

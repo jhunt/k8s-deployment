@@ -1,0 +1,21 @@
+---
+#
+#  ops/cloud/vsphere.yml
+#
+#  This ops file enables the vSphere Cloud Provider, so that your
+#  Kubernetes cluster can provision VMDK assets in vCenter in
+#  response to PersistentVolumeClaim requests for volumes to attach
+#  to pods.
+#
+- path: /instance_groups/name=control/jobs/name=control/properties/cloud-provider?
+  type: replace
+  value:
+    type: vsphere
+    vsphere:
+      ip: ((vsphere_ip))
+      username: ((vsphere_username))
+      password: ((vsphere_password))
+      datacenter: ((vsphere_datacenter))
+      datastore: ((vsphere_datastore))
+      network: ((vsphere_network))
+      folder: ((vsphere_folder))

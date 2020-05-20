@@ -1,0 +1,33 @@
+---
+#
+#  ops/vip.yml
+#
+#  This ops file co-locates a new load balancer job ("lb") on the control
+#  node, and activates the keepalived VRRP feature to enable a single
+#  entrypoint to a cluster of API server nodes.  For this to work, you
+#  must choose a virtual router ID that is not in use on the local LAN,
+#  as well as a virtual IP (the "VIP") to be the singular entrypoint.
+#
+#  These are specified as the "vrrp_id" and "vip" variables, respesctively.
+#
+- path: /instance_groups/name=control/jobs/-
+  type: replace
+  value:
+    name: lb
+    release: k8s
+    properties:
+      vrrp:
+        id: ((vrrp_id))
+        ip: ((vip))
+
+- path: /instance_groups/name=control/jobs/name=control/properties/apiserver/additional-sans/-
+  type: replace
+  value: ((vip))
+
+- path: /instance_groups/name=control/jobs/name=kubelet/properties/apiserver?
+  type: replace
+  value: ((vip))
+
+- path: /instance_groups/name=worker/jobs/name=kubelet/properties?/apiserver?
+  type: replace
+  value: ((vip))

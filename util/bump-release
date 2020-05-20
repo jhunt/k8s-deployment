@@ -1,0 +1,39 @@
+#!/bin/bash
+set -eu
+
+release_version=${1:-}
+release_url=${2:-}
+release_sha1=${3:-}
+
+if [[ -z "$release_version" || -z "$release_url" || -z "$release_sha1" ]]; then
+  echo >&2 "USAGE: bump-release VERSION URL SHA1"
+  exit 1
+fi
+
+rv_len=${#release_version}
+ru_len=${#release_url}
+rs_len=${#release_sha1}
+
+max=$rv_len
+if [[ $ru_len -gt $max ]]; then
+  max=$ru_len
+fi
+if [[ $rs_len -gt $max ]]; then
+  max=$rs_len
+fi
+max=$(( max + 2 ))
+rv=$(printf "%-*s" $max '"'"$release_version"'"')
+ru=$(printf "%-*s" $max '"'"$release_url"'"')
+rs=$(printf "%-*s" $max '"'"$release_sha1"'"')
+
+sed -e 's/\(version\):.*\(# ci-release-version\)/\1: '"$rv"' \2/' \
+    -e 's|\(url\):.*\(# ci-release-url\)|\1:     '"$ru"' \2|' \
+    -e 's/\(sha1\):.*\(# ci-release-sha1\)/\1:    '"$rs"' \2/' \
+  <k8s.yml >.k8s.yml
+if ! spruce json .k8s.yml >/dev/null; then
+  #rm .k8s.yml
+  exit 1
+fi
+
+mv .k8s.yml k8s.yml
+exit 0

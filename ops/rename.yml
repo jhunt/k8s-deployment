@@ -1,0 +1,12 @@
+---
+#
+#  ops/rename.yml
+#
+#  By default, this deployment deploys to BOSH as the "k8s" deployment.
+#  To change that, include this ops file and set the "name" variable to
+#  whatever you would like to name the deployment.  Don't forget to also
+#  change your `-d` flag to `bosh` CLI!
+#
+- type: replace
+  path: /name
+  value: ((name))

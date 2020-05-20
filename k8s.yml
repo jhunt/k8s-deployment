@@ -1,0 +1,111 @@
+name: k8s
+
+instance_groups:
+  - name:      control
+    instances: 1
+    azs:       [z1,z2,z3]
+    vm_type:   default
+    vm_extensions:
+      - kubelet
+    persistent_disk: 20_000
+    stemcell:  default
+    networks:
+      - name: default
+
+    jobs:
+      - name: etcd
+        release: k8s
+      - name: control
+        release: k8s
+        properties:
+          kubelet:
+            instance-groups:
+              - worker.default
+              - control.default
+          apiserver:
+            additional-sans:
+              - 10.245.0.1
+          cluster:
+            name: prodernetes
+          encryption:
+            key: ((encryption-key))
+          tls:
+            ca:
+              certificate: ((tls-ca.certificate))
+              key:         ((tls-ca.private_key))
+            sa:
+              certificate: ((tls-sa.certificate))
+              key:         ((tls-sa.private_key))
+      - name: net-flannel
+        release: k8s
+      - name: runtime-runc
+        release: k8s
+        properties:
+          cni: flannel
+      - name: kubelet
+        release: k8s
+        properties:
+          master: true
+
+      - name: jumpbox
+        release: k8s
+      - name: smoke-tests
+        release: k8s
+
+  - name:      worker
+    instances: 3
+    azs:       [z1,z2,z3]
+    vm_type:   default
+    vm_extensions:
+      - kubelet
+    persistent_disk: 20_000
+    stemcell:  default
+    networks:
+      - name: default
+
+    jobs:
+      - name: net-flannel
+        release: k8s
+      - name: runtime-runc
+        release: k8s
+        properties:
+          cni: flannel
+      - name: kubelet
+        release: k8s
+
+variables:
+  - name: tls-ca
+    type: certificate
+    options:
+      is_ca: yes
+      common_name: ca
+
+  - name: tls-sa
+    type: certificate
+    options:
+      is_ca: yes
+      common_name: sa
+
+  - name: encryption-key
+    type: password
+    options:
+      length: 32
+      include_special: yes
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  serial: true
+  canary_watch_time: 1000-120000
+  update_watch_time: 1000-120000
+
+stemcells:
+  - alias:   default
+    os:      ubuntu-xenial
+    version: "24.56" # ci-stemcell-version
+
+releases:
+  - name:    k8s
+    version: "1.18.2-build.1"                                                                                    # ci-release-version
+    url:     "https://github.com/jhunt/k8s-boshrelease/releases/download/v1.18.2-build.1/k8s-1.18.2-build.1.tgz" # ci-release-url
+    sha1:    "74634f95f4839d83bd313d31afc8a1c64177d957"                                                          # ci-release-sha1

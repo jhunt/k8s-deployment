@@ -1,0 +1,18 @@
+---
+#
+#  ops/cloud/vsphere-insecure.yml
+#
+#  requires: ops/cloud/vsphere.yml
+#
+#  This ops file turns off vCenter TLS X.509 Certificate validation,
+#  which may be required if your vCenter is using a self-signed
+#  certificate, or a certificate from an unknown and/or untrusted
+#  certificate authority.
+#
+#  USE THIS OPS FILE WITH CAUTION.
+#  It has the potential to introduce man-in-the-middle attacks at
+#  a *very* low level, with drastic repercussions.
+#
+- path: /instance_groups/name=control/jobs/name=control/properties/cloud-provider/vsphere/verify-tls?
+  type: replace
+  value: false

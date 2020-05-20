@@ -1,0 +1,19 @@
+---
+#
+#  ops/scale.yml
+#
+#  Out of the box, this deployment gives you a single control
+#  plane node (etcd + apiserver) and three worker nodes.
+#
+#  This ops file lets you scale those two instance groups
+#  independently.  Best practices dictate that control nodes
+#  always be deployed in odd numbers (usually 1, 3, or 5).
+#  Worker nodes should be scaled to meet your workload demands.
+#
+- path: /instance_groups/name=control/instances
+  type: replace
+  value: ((control_plane_instances))
+
+- path: /instance_groups/name=worker/instances
+  type: replace
+  value: ((worker_instances))

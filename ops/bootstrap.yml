@@ -1,0 +1,14 @@
+---
+#
+#  ops/bootstrap.yml
+#
+#  This ops file lets you splice in your own (stringified) YAML
+#  bootstrap Kubernetes resources, to be applied to your cluster
+#  during post-deploy.
+#
+#  Note that if you introduce a syntax error in the YAML, the
+#  deployment will fail.
+#
+- path: /instance_groups/name=control/jobs/name=control/properties/bootstrap?
+  type: replace
+  value: ((bootstrap_resources_yaml))

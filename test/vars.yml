@@ -1,0 +1,9 @@
+---
+tls-ca:
+  certificate: pem
+  private_key: pem
+tls-sa:
+  certificate: pem
+  private_key: pem
+
+encryption-key: foo

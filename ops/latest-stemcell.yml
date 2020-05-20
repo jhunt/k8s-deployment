@@ -1,0 +1,13 @@
+---
+#
+#  ops/latest-stemcell.yml
+#
+#  This deployment recipe is pinned to a specific version of Xenial
+#  Ubuntu stemcell.  If, for whatever reason, you want or need to
+#  use a newer version of the stemell, this ops file lets you pin
+#  to the "latest" available on the BOSH director you are deploying
+#  this cluster to.
+#
+- path: /stemcells/alias=default/version
+  type: replace
+  value: latest

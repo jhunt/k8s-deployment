@@ -1,0 +1,18 @@
+---
+#
+#  ops/resize_disks.yml
+#
+#  By default, control and worker nodes will be deployed
+#  with 20Gi persistent disks, for storing generated state
+#  data (like certificates we'd rather not re-generate).
+#
+#  This ops file lets you resize those persistent disks
+#  independently.
+#
+- path: /instance_groups/name=control/persistent_disk?
+  type: replace
+  value: ((control_plane_disk_size))
+
+- path: /instance_groups/name=worker/persistent_disk?
+  type: replace
+  value: ((worker_disk_size))

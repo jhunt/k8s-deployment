@@ -1,0 +1,18 @@
+---
+#
+#  ops/latest-release.yml
+#
+#  This deployment recipe is pinned to a specific version of the
+#  k8s BOSH release.  If, for whatever reason, you want or need to
+#  use a newer version of the release, this ops file lets you pin
+#  to the "latest" available on the BOSH director you are deploying
+#  this cluster to.
+#
+#  Note that other issues with the manifest may crop up if your
+#  targeted release version is too far in the past or the future.
+#
+- path: /releases/name=k8s
+  type: replace
+  value:
+    name:    k8s
+    version: latest

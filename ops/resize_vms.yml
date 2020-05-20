@@ -1,0 +1,17 @@
+---
+#
+#  ops/resize_vms.yml
+#
+#  Out of the box, both the "control" and "worker" instance_groups
+#  will use the "default" VM type in your director's cloud config.
+#
+#  This ops file lets you override those, independently if you wish,
+#  to use new VM types.
+#
+- path: /instance_groups/name=control/vm_type
+  type: replace
+  value: ((control_plane_vm_type))
+
+- path: /instance_groups/name=worker/vm_type
+  type: replace
+  value: ((worker_vm_type))

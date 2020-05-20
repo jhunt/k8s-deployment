@@ -1,0 +1,19 @@
+#!/bin/bash
+set -eu
+
+stemcell_version=${1:-}
+
+if [[ -z "$stemcell_version" ]]; then
+  echo >&2 "USAGE: bump-stemcell VERSION"
+  exit 1
+fi
+
+sed -e 's/\(version\):.*\(# ci-stemcell-version\)/\1: "'"$stemcell_version"'" \2/' \
+  <k8s.yml >.k8s.yml
+if ! spruce json .k8s.yml >/dev/null; then
+  rm .k8s.yml
+  exit 1
+fi
+
+mv .k8s.yml k8s.yml
+exit 0

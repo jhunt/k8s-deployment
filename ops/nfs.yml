@@ -1,0 +1,12 @@
+---
+#
+#  ops/nfs.yml
+#
+#  This ops file enables the NFS kernel packages necessary
+#  to allow Pods to mount remote Network File System mountpoints.
+#
+- path: /instance_groups/name=worker/jobs/-
+  type: replace
+  value:
+    name: nfs
+    release: k8s
